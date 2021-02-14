@@ -1,0 +1,41 @@
+version: '3.5'
+
+services:
+  redis:
+    image: redis
+    ports:
+      - 10258:10258
+    container_name: cache
+    environment:
+      - REDIS_URL=redis://cache
+    volumes:
+      - redis-data:/data
+
+  stackoverflow-clone:
+    image: stackoverflow-clone
+    ports:
+      - '4020:4020'
+    depends_on:
+      - redis
+    labels:
+      kompose.service.type: NodePort
+    env_file: .env
+    volumes:
+      - .:/home/stackoverflow-clone
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: uwof9vheiccgcslzfw73
+      POSTGRES_DB: baahpn2qzthq5olbvagf
+      POSTGRES_PASSWORD: tZS5EOSKza5tFD9xI8hX
+      POSTGRES_HOST: 185.42.117.114
+    ports:
+      - 5432
+    volumes:
+      - ./.data/postgres-data:/var/lib/postgresql/data
+
+volumes:
+  redis-data:
+    external: false
+
